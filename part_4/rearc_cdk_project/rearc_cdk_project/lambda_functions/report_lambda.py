@@ -16,9 +16,7 @@ spark = SparkSession.builder \
     .appName("Rearc Data Analysis") \
     .config("spark.sql.legacy.timeParserPolicy", "LEGACY") \
     .config("spark.jars.packages",
-            "org.apache.hadoop:hadoop-aws:3.2.2,"
-            "net.snowflake:spark-snowflake_2.12:3.0.0,"
-            "net.snowflake:snowflake-jdbc:3.17.0") \
+            "org.apache.hadoop:hadoop-aws:3.2.2") \
     .getOrCreate()
 
 # AWS Configuration
@@ -73,6 +71,14 @@ def process_reports(event, context):
         csv_df = read_s3_csv(S3_BUCKET, CSV_S3_PATH)
         json_df = read_s3_json(S3_BUCKET, JSON_S3_PATH)
 
+        # Rename columns properly
+        csv_df = csv_df.toDF("series_id", "year", "period", "value", "footnote_codes")
+
+        # Trim strings to remove unwanted spaces
+        csv_df = csv_df.withColumn("series_id", trim(col("series_id"))) \
+            .withColumn("period", trim(col("period"))) \
+            .withColumn("value", col("value").cast("float"))
+
         # --- Task 1: Population Statistics (2013-2018) ---
         pop_stats_df = json_df.filter((col("year") >= 2013) & (col("year") <= 2018))
         pop_summary_df = pop_stats_df.select(
@@ -92,17 +98,17 @@ def process_reports(event, context):
         best_year_df = agg_df.withColumn("rank", row_number().over(window_spec)) \
             .filter(col("rank") == 1).drop("rank")
 
-        logger.info("🏆 Best Year for Each Series ID:")
-        best_year_df.show()
+        logger.info("Best Year for Each Series ID:")
+        best_year_df.show(10,truncate=False)
 
         # --- Task 3: Report for `PRS30006032`, `Q01` ---
         filtered_df = csv_df.filter((col("series_id") == "PRS30006032") & (col("period") == "Q01"))
 
-        final_report_df = filtered_df.join(json_df, "year", "left").select(
+        final_report_df = filtered_df.join(json_df, "year", "inner").select(
             "series_id", "year", "period", "value", "population"
         )
 
-        logger.info("📋 Final Report for `PRS30006032`, `Q01`:")
+        logger.info("Final Report for `PRS30006032`, `Q01`:")
         final_report_df.show()
 
         return {
