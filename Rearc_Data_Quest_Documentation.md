@@ -122,6 +122,8 @@ npm install -g aws-cdk
 # Install required Python dependencies
 
 pip install -r requirements.txt
+
+
 Step 2: Bootstrap the AWS Environment
 (Only required for the first-time setup.)
 
