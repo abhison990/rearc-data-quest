@@ -1,4 +1,4 @@
-Introduction
+**Introduction**
 This document outlines the steps taken to complete the Rearc Data Quest. It details the infrastructure setup, data extraction, transformation, and analysis process using AWS and PySpark.
 
 ****Part 1:** AWS S3 & Sourcing Datasets**
@@ -11,9 +11,7 @@ Uploaded files from the open dataset to the S3 bucket.
 Modified bucket permissions to allow public read-only access:
 Disabled "Block Public Access."
 Applied the following bucket policy:
-json
-Copy
-Edit
+
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -73,9 +71,9 @@ Selected the year with the highest total value per series_id.
 Final Report for PRS30006032 & Q01:
 Filtered data for PRS30006032 and Q01.
 Merged with population dataset.
-Results:
 
 Results saved in S3: s3://abh-de-rearc/analytics-results/
+
 Notebook File: part_3/data_analysis.ipynb
 Script File: part_3/part3_data_analysis.py
 
@@ -95,27 +93,24 @@ AWS CDK Implementation Details:
 Defined an S3 bucket (abh-de-rearc) to store datasets and API responses.
 Configured S3 Event Notifications:
 When a JSON file is uploaded, an event is sent to SQS Queue.
-Created an SQS Queue (DataProcessingQueue):
-Triggers a Lambda function (report_lambda.py) to process incoming data.
-Created Two Lambda Functions:
-data_fetch_lambda.py
-Fetches data from the source and API.
-Saves the data to S3.
-report_lambda.py
-Reads data from S3.
-Processes it using PySpark.
-Logs and outputs results.
-Scheduled the Data Fetch Lambda:
-Configured AWS EventBridge to invoke data_fetch_lambda.py daily.
+    Created an SQS Queue (DataProcessingQueue):
+    Triggers a Lambda function (report_lambda.py) to process incoming data.
+    Created Two Lambda Functions:
+        data_fetch_lambda.py
+            Fetches data from the source and API.
+            Saves the data to S3.
+        report_lambda.py
+            Reads data from S3.
+            Processes it using PySpark.
+            Logs and outputs results.
+            Scheduled the Data Fetch Lambda:
+            Configured AWS EventBridge to invoke data_fetch_lambda.py daily.
 Deployment Instructions
 Follow these steps to deploy the AWS CDK stack:
 
 Step 1: Install AWS CDK & Dependencies
 Ensure that AWS CDK and dependencies are installed on your system.
 
-bash
-Copy
-Edit
 # Install AWS CDK globally
 npm install -g aws-cdk
 
@@ -124,25 +119,18 @@ pip install -r requirements.txt
 Step 2: Bootstrap the AWS Environment
 (Only required for the first-time setup.)
 
-bash
-Copy
-Edit
+
 cdk bootstrap
+
 This sets up resources required by CDK in your AWS account.
 
 Step 3: Synthesize the CloudFormation Template
 Run the following command to generate the CloudFormation template from your CDK code.
 
-bash
-Copy
-Edit
 cdk synth
 Step 4: Deploy the AWS CDK Stack
 Run the following command to deploy the infrastructure:
 
-bash
-Copy
-Edit
 cdk deploy
 Step 5: Verify the Deployment
 Once the stack is deployed, verify the created resources in the AWS Console:
@@ -151,5 +139,6 @@ S3 Bucket: Check if the abh-de-rearc bucket exists.
 SQS Queue: Confirm that DataProcessingQueue is receiving messages.
 EventBridge Rule: Ensure the scheduled event is configured correctly.
 Lambda Functions: Test data_fetch_lambda.py and report_lambda.py.
-Conclusion
+
+**Conclusion**
 This project successfully automates the ingestion, storage, and processing of open datasets using AWS services. AWS CDK provides a structured, scalable, and maintainable way to manage infrastructure as code.
