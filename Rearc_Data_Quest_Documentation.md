@@ -1,7 +1,9 @@
 **Introduction**
+
 This document outlines the steps taken to complete the Rearc Data Quest. It details the infrastructure setup, data extraction, transformation, and analysis process using AWS and PySpark.
 
 ****Part 1:** AWS S3 & Sourcing Datasets**
+
 Task
 Republish an open dataset in an Amazon S3 bucket.
 Provide a public link for data access.
@@ -35,6 +37,7 @@ Public Access: Read-only
 Object URL Example: https://abh-de-rearc.s3.ap-south-1.amazonaws.com/bls-data/pr.data.0.Current
 
 ****Part 2:** API Data Extraction**
+
 Task
 Fetch data from an API and store it in S3.
 Implementation Steps
@@ -48,6 +51,7 @@ API Data Storage:
 S3 Path: s3://abh-de-rearc/api-data/us_population.json
 
 **Part 3: Data Analytics**
+
 Task
 Load data from Part 1 and Part 2 into Spark DataFrames.
 Perform statistical analysis:
@@ -78,6 +82,7 @@ Notebook File: part_3/data_analysis.ipynb
 Script File: part_3/part3_data_analysis.py
 
 **Part 4: Infrastructure as Code (AWS CDK)**
+
 Objective
 Automate data pipeline deployment using AWS CDK.
 
@@ -115,10 +120,10 @@ Ensure that AWS CDK and dependencies are installed on your system.
 npm install -g aws-cdk
 
 # Install required Python dependencies
+
 pip install -r requirements.txt
 Step 2: Bootstrap the AWS Environment
 (Only required for the first-time setup.)
-
 
 cdk bootstrap
 
@@ -141,4 +146,5 @@ EventBridge Rule: Ensure the scheduled event is configured correctly.
 Lambda Functions: Test data_fetch_lambda.py and report_lambda.py.
 
 **Conclusion**
+
 This project successfully automates the ingestion, storage, and processing of open datasets using AWS services. AWS CDK provides a structured, scalable, and maintainable way to manage infrastructure as code.
